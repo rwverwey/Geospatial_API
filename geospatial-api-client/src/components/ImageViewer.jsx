@@ -89,7 +89,7 @@ const ImageViewer = ({ result, zoom, setZoom }) => {
     setTimeout(() => {
       setLoading(false);
       setFadeIn(true);
-    }, 300); // give the user a perceptible transition
+    }, 300); 
   };
 
   const handleSave = async () => {
@@ -149,7 +149,7 @@ const ImageViewer = ({ result, zoom, setZoom }) => {
       <div style={styles.info}>
         <p><strong>Date:</strong> {result.date}</p>
         <p><strong>Lat:</strong> {result.lat} | <strong>Lon:</strong> {result.lon}</p>
-        {saveSuccess && <p style={styles.success}>✅ Image saved successfully!</p>}
+        {saveSuccess && <p style={styles.success}>Image saved successfully!</p>}
       </div>
     </div>
   );

@@ -98,7 +98,7 @@ exports.getAllGeoData = async (req, res) => {
       results,
     });
   } catch (err) {
-    console.error('GET ALL FILTER ERROR:', err); // Do NOT use err.message here
+    console.error('GET ALL FILTER ERROR:', err); 
     res.status(500).json({ error: 'Failed to retrieve entries', detail: err.message });
   }
 };
