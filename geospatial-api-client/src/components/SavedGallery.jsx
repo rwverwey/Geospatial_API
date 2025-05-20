@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Snackbar from './Snackbar';
 
 const styles = {
@@ -49,8 +49,7 @@ const styles = {
   },
 };
 
-const SavedGallery = () => {
-  const [saved, setSaved] = useState([]);
+const SavedGallery = ({ saved, setSaved }) => {
   const [hoveredId, setHoveredId] = useState(null);
   const [snackbar, setSnackbar] = useState('');
 
@@ -59,24 +58,16 @@ const SavedGallery = () => {
     setTimeout(() => setSnackbar(''), 3000);
   };
 
-  const fetchSaved = async () => {
-    try {
-      const res = await fetch('/api/geo-data/all');
-      const data = await res.json();
-      setSaved(data);
-    } catch {
-      console.error('Failed to fetch saved images');
-    }
-  };
-
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this saved image?')) return;
+
     try {
       const res = await fetch(`/api/geo-data/${id}`, { method: 'DELETE' });
       const data = await res.json();
+
       if (res.ok) {
         setSaved(prev => prev.filter(entry => entry._id !== id));
-        showSnackbar('🗑️ Image deleted');
+        showSnackbar('Image deleted');
       } else {
         alert(data.error || 'Delete failed');
       }
@@ -85,27 +76,23 @@ const SavedGallery = () => {
     }
   };
 
-  useEffect(() => {
-    fetchSaved();
-  }, []);
-
   return (
     <div>
-      <h3 style={styles.heading}>🗂️ Saved Images</h3>
+      <h3 style={styles.heading}>Saved Images</h3>
       <div style={styles.list}>
         {saved.map((item) => (
           <div key={item._id} style={styles.card}>
             <button
               style={{
                 ...styles.deleteBtn,
-                ...(hoveredId === item._id ? styles.deleteBtnHover : {})
+                ...(hoveredId === item._id ? styles.deleteBtnHover : {}),
               }}
               onClick={() => handleDelete(item._id)}
               onMouseEnter={() => setHoveredId(item._id)}
               onMouseLeave={() => setHoveredId(null)}
               title="Delete this entry"
             >
-              🗑️
+              ✖
             </button>
             <img src={item.url} alt="Saved NASA" style={styles.image} />
             <div style={styles.meta}>

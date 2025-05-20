@@ -61,7 +61,7 @@ const styles = {
   },
 };
 
-const ImageViewer = ({ result, zoom, setZoom }) => {
+const ImageViewer = ({ result, zoom, setZoom, fetchSaved }) => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
   const [fadeIn, setFadeIn] = useState(false);
@@ -89,7 +89,7 @@ const ImageViewer = ({ result, zoom, setZoom }) => {
     setTimeout(() => {
       setLoading(false);
       setFadeIn(true);
-    }, 300); 
+    }, 300);
   };
 
   const handleSave = async () => {
@@ -111,6 +111,7 @@ const ImageViewer = ({ result, zoom, setZoom }) => {
       const data = await res.json();
       if (res.ok) {
         setSaveSuccess(true);
+        fetchSaved?.(); // Call fetchSaved if provided
         setTimeout(() => setSaveSuccess(false), 3000);
       } else {
         alert(data.error || 'Failed to save');

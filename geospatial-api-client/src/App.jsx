@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GeoDashboard from './components/GeoDashboard';
 import SavedGallery from './components/SavedGallery';
 import ImageViewer from './components/ImageViewer';
@@ -40,6 +40,27 @@ const styles = {
 function App() {
   const [result, setResult] = useState(null);
   const [zoom, setZoom] = useState(1);
+  const [savedImages, setSavedImages] = useState([]);
+
+  const fetchSaved = async () => {
+    try {
+      const res = await fetch('/api/geo-data/all');
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.results)) {
+        setSavedImages(data.results);
+      } else {
+        console.warn('Invalid API response shape:', data);
+        setSavedImages([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch saved images:', err);
+      setSavedImages([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchSaved();
+  }, []);
 
   return (
     <div style={styles.app}>
@@ -48,11 +69,11 @@ function App() {
       </aside>
 
       <main style={styles.main}>
-        <ImageViewer result={result} zoom={zoom} setZoom={setZoom} />
+        <ImageViewer result={result} zoom={zoom} setZoom={setZoom} fetchSaved={fetchSaved} />
       </main>
 
       <aside style={styles.rightPanel}>
-        <SavedGallery />
+        <SavedGallery saved={savedImages} setSaved={setSavedImages} />
       </aside>
     </div>
   );

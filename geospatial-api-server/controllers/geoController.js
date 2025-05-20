@@ -36,7 +36,7 @@ exports.saveGeoData = async (req, res) => {
   }
 };
 
-// GET /api/geo-data/all (with filters, select, sort, pagination)
+// GET /api/geo-data/all
 exports.getAllGeoData = async (req, res) => {
   const {
     after,
@@ -77,18 +77,20 @@ exports.getAllGeoData = async (req, res) => {
   }
 
   const selectFields = fields ? fields.split(',').join(' ') : '';
-  const sortFields = sort || '';
+  const sortFields = typeof sort === 'string' && sort.trim() !== '' ? sort : undefined;
   const limitNum = parseInt(limit) || 20;
   const pageNum = parseInt(page) || 1;
   const skip = (pageNum - 1) * limitNum;
 
   try {
     const total = await GeoData.countDocuments(filter);
-    const results = await GeoData.find(filter)
-      .select(selectFields)
-      .sort(sortFields)
-      .skip(skip)
-      .limit(limitNum);
+    const query = GeoData.find(filter).select(selectFields);
+
+    if (sortFields) {
+      query.sort(sortFields);
+    }
+
+    const results = await query.skip(skip).limit(limitNum);
 
     res.status(200).json({
       page: pageNum,
@@ -98,7 +100,7 @@ exports.getAllGeoData = async (req, res) => {
       results,
     });
   } catch (err) {
-    console.error('GET ALL FILTER ERROR:', err); 
+    console.error('GET ALL FILTER ERROR:', err);
     res.status(500).json({ error: 'Failed to retrieve entries', detail: err.message });
   }
 };
