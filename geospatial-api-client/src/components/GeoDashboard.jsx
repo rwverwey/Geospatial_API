@@ -58,6 +58,18 @@ const GeoDashboard = ({ setResult, setZoom }) => {
   const [date, setDate] = useState('');
   const [hover, setHover] = useState(false);
 
+  const isValidLat = val => {
+    const n = parseFloat(val);
+    return !isNaN(n) && n >= -90 && n <= 90;
+  };
+
+  const isValidLon = val => {
+    const n = parseFloat(val);
+    return !isNaN(n) && n >= -180 && n <= 180;
+  };
+
+  const isValidDate = val => /^\d{4}-\d{2}-\d{2}$/.test(val);
+
   const fetchImage = async (lat, lon, date) => {
     setResult(null);
     try {
@@ -76,15 +88,31 @@ const GeoDashboard = ({ setResult, setZoom }) => {
 
   const handleCustomSearch = () => {
     if (!lat || !lon || !date) {
-      alert('Please fill in all fields');
+      alert('All fields are required.');
       return;
     }
+
+    if (!isValidLat(lat)) {
+      alert('Latitude must be a number between -90 and 90.');
+      return;
+    }
+
+    if (!isValidLon(lon)) {
+      alert('Longitude must be a number between -180 and 180.');
+      return;
+    }
+
+    if (!isValidDate(date)) {
+      alert('Date must be in YYYY-MM-DD format.');
+      return;
+    }
+
     fetchImage(lat, lon, date);
   };
 
   return (
     <div style={styles.wrapper}>
-      <div style={styles.section}>
+      <div style={styles.section}>303
         <div style={styles.header}>📍 Custom Location</div>
         <div style={styles.formGroup}>
           <label style={styles.label}>Latitude</label>
