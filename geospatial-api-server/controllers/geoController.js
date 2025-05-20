@@ -12,7 +12,6 @@ exports.fetchGeoDataFromNasa = async (req, res) => {
     if (!response.ok) {
       return res.status(400).json({ error: 'Failed to fetch from NASA API' });
     }
-    const data = await response.json();
     const imageUrl = response.url;
 
     res.status(200).json({
@@ -55,42 +54,36 @@ exports.getAllGeoData = async (req, res) => {
 
   const filter = {};
 
-  // Date filters
   if (after || before) {
     filter.date = {};
     if (after) filter.date.$gt = new Date(after);
     if (before) filter.date.$lt = new Date(before);
   }
 
-  // Latitude
   if (latMin || latMax) {
     filter.latitude = {};
     if (latMin) filter.latitude.$gte = parseFloat(latMin);
     if (latMax) filter.latitude.$lte = parseFloat(latMax);
   }
 
-  // Longitude
   if (lonMin || lonMax) {
     filter.longitude = {};
     if (lonMin) filter.longitude.$gte = parseFloat(lonMin);
     if (lonMax) filter.longitude.$lte = parseFloat(lonMax);
   }
 
-  // Name search
   if (locationName) {
     filter.locationName = { $regex: new RegExp(locationName, 'i') };
   }
 
   const selectFields = fields ? fields.split(',').join(' ') : '';
   const sortFields = sort || '';
-
   const limitNum = parseInt(limit) || 20;
   const pageNum = parseInt(page) || 1;
   const skip = (pageNum - 1) * limitNum;
 
   try {
     const total = await GeoData.countDocuments(filter);
-
     const results = await GeoData.find(filter)
       .select(selectFields)
       .sort(sortFields)
@@ -105,8 +98,8 @@ exports.getAllGeoData = async (req, res) => {
       results,
     });
   } catch (err) {
-    console.error('GET ALL FILTER ERROR:', err.message);
-    res.status(500).json({ error: 'Failed to retrieve entries' });
+    console.error('GET ALL FILTER ERROR:', err); // Do NOT use err.message here
+    res.status(500).json({ error: 'Failed to retrieve entries', detail: err.message });
   }
 };
 
