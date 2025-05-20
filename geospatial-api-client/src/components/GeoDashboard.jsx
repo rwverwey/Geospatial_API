@@ -113,7 +113,7 @@ const GeoDashboard = ({ setResult, setZoom }) => {
   return (
     <div style={styles.wrapper}>
       <div style={styles.section}>303
-        <div style={styles.header}>📍 Custom Location</div>
+        <div style={styles.header}>Custom Location</div>
         <div style={styles.formGroup}>
           <label style={styles.label}>Latitude</label>
           <input type="text" value={lat} onChange={e => setLat(e.target.value)} style={styles.input} />
